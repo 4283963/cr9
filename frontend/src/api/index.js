@@ -24,6 +24,10 @@ export const breedingApi = {
   create: (data) => api.post('/breeding', data),
   update: (id, data) => api.put(`/breeding/${id}`, data),
   delete: (id) => api.delete(`/breeding/${id}`),
+  checkKinship: (fatherId, motherId, maxDepth) =>
+    api.get(`/breeding/check-kinship`, {
+      params: { fatherId, motherId, maxDepth },
+    }),
 }
 
 export const raceApi = {

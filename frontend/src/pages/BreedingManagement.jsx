@@ -31,10 +31,43 @@ export default function BreedingManagement() {
     notes: '',
     status: '配对中',
   })
+  const [kinship, setKinship] = useState(null)
+  const [kinshipLoading, setKinshipLoading] = useState(false)
+  const [kinshipError, setKinshipError] = useState(null)
 
   useEffect(() => {
     loadData()
   }, [])
+
+  useEffect(() => {
+    if (!formData.fatherId || !formData.motherId) {
+      setKinship(null)
+      setKinshipLoading(false)
+      setKinshipError(null)
+      return
+    }
+    let cancelled = false
+    setKinshipLoading(true)
+    setKinshipError(null)
+    setKinship(null)
+    breedingApi
+      .checkKinship(Number(formData.fatherId), Number(formData.motherId), 3)
+      .then((res) => {
+        if (!cancelled) {
+          setKinship(res.data)
+          setKinshipLoading(false)
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setKinshipError(err.response?.data?.error || '亲缘检测失败')
+          setKinshipLoading(false)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [formData.fatherId, formData.motherId])
 
   const loadData = async () => {
     try {
@@ -51,6 +84,13 @@ export default function BreedingManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const highRisks = ['极高风险', '高风险', '中风险']
+    if (kinship?.hasRisk && highRisks.includes(kinship.riskLevel)) {
+      const confirmMsg =
+        `⚠️ 【${kinship.riskLevel}】\n${kinship.message}\n\n` +
+        `共同祖先共 ${kinship.commonAncestors.length} 位。\n是否仍然继续${editingRecord ? '修改' : '创建'}配对？`
+      if (!window.confirm(confirmMsg)) return
+    }
     try {
       const payload = {
         ...formData,
@@ -83,6 +123,9 @@ export default function BreedingManagement() {
       notes: record.notes || '',
       status: record.status,
     })
+    setKinship(null)
+    setKinshipError(null)
+    setKinshipLoading(false)
     setShowModal(true)
   }
 
@@ -109,6 +152,9 @@ export default function BreedingManagement() {
       status: '配对中',
     })
     setEditingRecord(null)
+    setKinship(null)
+    setKinshipError(null)
+    setKinshipLoading(false)
   }
 
   const males = pigeons.filter((p) => p.gender === '雄')
@@ -206,6 +252,67 @@ export default function BreedingManagement() {
                   </select>
                 </div>
               </div>
+
+              {(kinshipLoading || kinshipError || kinship) && (
+                <div className={`kinship-alert kinship-alert-${
+                  kinshipLoading ? 'loading' :
+                  kinshipError ? 'error' :
+                  !kinship.hasRisk ? 'safe' :
+                  kinship.riskLevel === '极高风险' ? 'critical' :
+                  kinship.riskLevel === '高风险' ? 'high' :
+                  kinship.riskLevel === '中风险' ? 'medium' : 'low'
+                }`}>
+                  <div className="kinship-alert-title">
+                    {kinshipLoading && <span className="kinship-icon">🔍</span>}
+                    {kinshipError && <span className="kinship-icon">⚠️</span>}
+                    {kinship && !kinship.hasRisk && <span className="kinship-icon">✅</span>}
+                    {kinship?.riskLevel === '极高风险' && <span className="kinship-icon">🛑</span>}
+                    {kinship?.riskLevel === '高风险' && <span className="kinship-icon">🔴</span>}
+                    {kinship?.riskLevel === '中风险' && <span className="kinship-icon">🟠</span>}
+                    {kinship?.riskLevel === '低风险' && <span className="kinship-icon">🟡</span>}
+                    <span className="kinship-title-text">
+                      {kinshipLoading && '正在分析三代以内血统谱系…'}
+                      {kinshipError && `亲缘检测异常：${kinshipError}`}
+                      {kinship && !kinship.hasRisk && `${kinship.riskLevel} — 两只鸽子无共同祖先`}
+                      {kinship?.hasRisk && `【${kinship.riskLevel}】${kinship.message}`}
+                    </span>
+                  </div>
+
+                  {kinship?.hasRisk && kinship.commonAncestors?.length > 0 && (
+                    <div className="kinship-ancestors">
+                      <div className="kinship-ancestors-title">
+                        🧬 检测到 {kinship.commonAncestors.length} 位共同祖先（三代内）：
+                      </div>
+                      <ul className="kinship-ancestors-list">
+                        {kinship.commonAncestors.map((a, idx) => (
+                          <li key={a.ancestorId} className="kinship-ancestor-item">
+                            <div className="kinship-ancestor-head">
+                              <span className="kinship-ancestor-idx">#{idx + 1}</span>
+                              <strong className="kinship-ancestor-ring">{a.ancestorRingNumber}</strong>
+                              <span className="kinship-ancestor-name">{a.ancestorName}</span>
+                              <span className="kinship-ancestor-rel">{a.relationship}</span>
+                            </div>
+                            <div className="kinship-ancestor-detail">
+                              <span className="kinship-depth-tag tag-male">
+                                父系代数：{a.fatherSideDepths.join(' / ')}
+                              </span>
+                              <span className="kinship-depth-tag tag-female">
+                                母系代数：{a.motherSideDepths.join(' / ')}
+                              </span>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {kinship && !kinship.hasRisk && (
+                    <div className="kinship-detail-hint">
+                      检测范围：{kinship.maxDepth} 代以内 · 未发现共同祖先，可以放心配对。
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="form-row">
                 <div className="form-group">

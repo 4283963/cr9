@@ -1,7 +1,9 @@
 package com.pigeon.controller;
 
 import com.pigeon.dto.BreedingRecordDTO;
+import com.pigeon.dto.KinshipResultDTO;
 import com.pigeon.service.BreedingService;
+import com.pigeon.service.KinshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,9 @@ public class BreedingController {
 
     @Autowired
     private BreedingService breedingService;
+
+    @Autowired
+    private KinshipService kinshipService;
 
     @GetMapping
     public ResponseEntity<List<BreedingRecordDTO>> getAllRecords() {
@@ -44,5 +49,13 @@ public class BreedingController {
     public ResponseEntity<Void> deleteRecord(@PathVariable Long id) {
         breedingService.deleteRecord(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/check-kinship")
+    public ResponseEntity<KinshipResultDTO> checkKinship(
+            @RequestParam Long fatherId,
+            @RequestParam Long motherId,
+            @RequestParam(required = false) Integer maxDepth) {
+        return ResponseEntity.ok(kinshipService.checkKinship(fatherId, motherId, maxDepth));
     }
 }

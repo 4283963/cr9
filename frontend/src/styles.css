@@ -527,3 +527,172 @@ tr:hover {
   height: 14px;
   background: #cbd5e0;
 }
+
+.kinship-alert {
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin: 8px 0 20px;
+  border: 1px solid #cbd5e0;
+  animation: kinshipFadeIn 0.25s ease;
+}
+
+@keyframes kinshipFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.kinship-alert-loading {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+  color: #718096;
+}
+
+.kinship-alert-error {
+  background: #fff5f5;
+  border-color: #fc8181;
+  color: #c53030;
+}
+
+.kinship-alert-safe {
+  background: #f0fff4;
+  border-color: #9ae6b4;
+  color: #22543d;
+}
+
+.kinship-alert-critical,
+.kinship-alert-high {
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  border-color: #fc8181;
+  color: #742a2a;
+  box-shadow: 0 2px 12px rgba(229, 62, 62, 0.15);
+}
+
+.kinship-alert-medium {
+  background: #fffaf0;
+  border-color: #fbd38d;
+  color: #7b341e;
+  box-shadow: 0 2px 10px rgba(237, 137, 54, 0.12);
+}
+
+.kinship-alert-low {
+  background: #fffff0;
+  border-color: #f6e05e;
+  color: #744210;
+}
+
+.kinship-alert-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  flex-wrap: wrap;
+}
+
+.kinship-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.kinship-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.kinship-detail-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.kinship-ancestors {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.12);
+}
+
+.kinship-ancestors-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.kinship-ancestors-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kinship-ancestor-item {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.kinship-ancestor-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.kinship-ancestor-idx {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.kinship-ancestor-ring {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.kinship-ancestor-name {
+  opacity: 0.85;
+}
+
+.kinship-ancestor-rel {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(229, 62, 62, 0.12);
+  color: inherit;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.kinship-ancestor-detail {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.kinship-depth-tag {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 4px;
+  background: #edf2f7;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.kinship-depth-tag.tag-male {
+  background: #ebf8ff;
+  color: #2c5282;
+}
+
+.kinship-depth-tag.tag-female {
+  background: #fff5f7;
+  color: #97266d;
+}
