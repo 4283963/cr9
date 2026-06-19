@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { pigeonApi } from '../api'
+import PedigreeTree from '../components/PedigreeTree'
 
 export default function PigeonManagement() {
   const [pigeons, setPigeons] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [editingPigeon, setEditingPigeon] = useState(null)
+  const [pedigreePigeon, setPedigreePigeon] = useState(null)
   const [formData, setFormData] = useState({
     ringNumber: '',
     name: '',
@@ -139,6 +141,9 @@ export default function PigeonManagement() {
                 <td>{p.hatchDate || '-'}</td>
                 <td>
                   <div className="action-buttons">
+                    <button className="btn btn-primary btn-sm" onClick={() => setPedigreePigeon(p)}>
+                      血统
+                    </button>
                     <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(p)}>
                       编辑
                     </button>
@@ -275,6 +280,20 @@ export default function PigeonManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {pedigreePigeon && (
+        <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setPedigreePigeon(null)}>
+          <div className="modal" style={{ maxWidth: 900 }}>
+            <h3>🕊️ 血统谱系 — {pedigreePigeon.ringNumber} ({pedigreePigeon.name})</h3>
+            <PedigreeTree rootPigeon={pedigreePigeon} />
+            <div className="form-actions">
+              <button type="button" className="btn btn-secondary" onClick={() => setPedigreePigeon(null)}>
+                关闭
+              </button>
+            </div>
           </div>
         </div>
       )}
